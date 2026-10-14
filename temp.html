@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TempMail Pro — Disposable Email, Instantly</title>
+<style>
+  :root{
+    --bg:#0b0f1a; --card:#121829; --card2:#1a2238; --border:#232c47;
+    --accent:#4f7cff; --accent2:#22d3ee; --text:#e6ebf5; --muted:#8b96b3;
+    --green:#34d399; --red:#f87171;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+  body{background:radial-gradient(1200px 600px at 80% -10%,#1b2a52 0%,transparent 60%),
+       radial-gradient(900px 500px at -10% 110%,#123a4a 0%,transparent 55%),var(--bg);
+       color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+  a{color:var(--accent2);text-decoration:none}
+
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--border)}
+  .logo{display:flex;align-items:center;gap:10px;font-size:1.35rem;font-weight:700}
+  .logo span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo .badge{font-size:.6rem;background:var(--accent);color:#fff;padding:3px 8px;border-radius:20px;letter-spacing:1px}
+  nav a{margin-left:24px;color:var(--muted);font-size:.9rem;transition:.2s}
+  nav a:hover{color:var(--text)}
+  .btn{border:none;cursor:pointer;font-weight:600;border-radius:10px;transition:.2s}
+  .btn-primary{background:linear-gradient(90deg,var(--accent),#6a5cff);color:#fff;padding:10px 20px;font-size:.9rem}
+  .btn-primary:hover{filter:brightness(1.15)}
+  .btn-ghost{background:transparent;color:var(--text);padding:9px 18px;border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--accent)}
+
+  .hero{text-align:center;padding:56px 20px 30px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15}
+  .hero h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);max-width:620px;margin:14px auto 0;font-size:1.02rem}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px;width:100%}
+  .addr-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-top:36px;
+    box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  .addr-label{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px}
+  .addr-row{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+  .addr-box{flex:1;min-width:240px;background:var(--card2);border:1px solid var(--border);border-radius:12px;
+    padding:16px 18px;font-size:1.15rem;font-weight:600;letter-spacing:.3px;display:flex;align-items:center;
+    overflow:hidden;word-break:break-all}
+  .addr-box.placeholder{color:var(--muted);font-weight:400;font-size:.95rem}
+  .icon-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:12px;
+    padding:0 18px;font-size:1.1rem;cursor:pointer;transition:.2s;min-height:50px}
+  .icon-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+  .stats{display:flex;gap:26px;margin-top:20px;flex-wrap:wrap}
+  .stat small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px}
+  .stat b{font-size:1.05rem}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .live{background:var(--green);box-shadow:0 0 8px var(--green)}
+  .offline{background:var(--red)}
+  .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;
+    display:inline-block;animation:spin .8s linear infinite;vertical-align:middle}
+  .spinner.sm{width:13px;height:13px;border-width:2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .syncing .spinner.sm{display:inline-block}
+  .sync-badge{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:.78rem}
+
+  .inbox{margin:34px 0 70px}
+  .inbox-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+  .inbox-head h2{font-size:1.25rem}
+  .inbox-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .msg-list{display:flex;flex-direction:column;gap:10px}
+  .msg{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;cursor:pointer;transition:.2s}
+  .msg:hover{border-color:var(--accent);transform:translateX(4px)}
+  .msg.unread{border-left:3px solid var(--accent)}
+  .msg-top{display:flex;justify-content:space-between;gap:14px}
+  .msg-from{font-weight:600;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .msg-time{color:var(--muted);font-size:.78rem;white-space:nowrap}
+  .msg-subj{margin-top:5px;font-size:.92rem;color:#c4cde4}
+  .msg-intro{margin-top:4px;font-size:.82rem;color:var(--muted)}
+  .empty{background:var(--card);border:1px dashed var(--border);border-radius:14px;padding:50px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:2.4rem;margin-bottom:10px}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(4,7,15,.75);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .modal-bg.open{display:flex}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;
+    max-height:82vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px}
+  .modal-head h3{font-size:1.05rem;margin-bottom:6px}
+  .modal-head small{color:var(--muted)}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer}
+  .modal-body{padding:24px;overflow-y:auto;line-height:1.65;font-size:.93rem;color:#d7deef;word-break:break-word}
+  .modal-body img{max-width:100%}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2a44;
+    border:1px solid var(--accent);color:var(--text);padding:11px 22px;border-radius:30px;font-size:.85rem;
+    transition:.3s;opacity:0;z-index:99}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:20px 0 60px}
+  .feat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+  .feat .ic{font-size:1.5rem;margin-bottom:10px}
+  .feat h3{font-size:.98rem;margin-bottom:6px}
+  .feat p{color:var(--muted);font-size:.83rem;line-height:1.55}
+
+  footer{border-top:1px solid var(--border);padding:22px 40px;color:var(--muted);font-size:.8rem;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:640px){header{padding:14px 18px}nav{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📬 Temp<span>Mail</span> <span class="badge">PRO</span></div>
+  <nav>
+    <a href="#inbox">Inbox</a>
+    <a href="#features">Features</a>
+    <a href="#" onclick="return false">FAQ</a>
+    <a href="#" onclick="return false">API</a>
+  </nav>
+  <button class="btn btn-ghost" onclick="location.reload()">🔄 New Identity</button>
+</header>
+
+<section class="hero">
+  <h1>Anonymous email.<br><span>No signup. No traces.</span></h1>
+  <p>Get a disposable inbox in one click. Perfect for signups, trials, verification codes — keep your real inbox spam-free.</p>
+</section>
+
+<div class="wrap">
+
+  <div class="addr-card">
+    <div class="addr-label">Your temporary address</div>
+    <div class="addr-row">
+      <div class="addr-box placeholder" id="addrBox"><span class="spinner"></span>&nbsp;&nbsp;Generating your secure address…</div>
+      <button class="icon-btn" title="Copy address" onclick="copyAddr()">📋</button>
+      <button class="icon-btn" title="QR code" onclick="showQR()">▦</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><small>Status</small><b id="statStatus"><span class="status-dot offline"></span>Connecting…</b></div>
+      <div class="stat"><small>Session</small><b id="statSession">—</b></div>
+      <div class="stat"><small>Messages</small><b id="statCount">0</b></div>
+      <div class="stat"><small>Last sync</small><b id="statSync">—</b></div>
+    </div>
+  </div>
+
+  <section class="inbox" id="inbox">
+    <div class="inbox-head">
+      <h2>📥 Inbox</h2>
+      <div class="inbox-actions">
+        <span class="sync-badge" id="syncBadge"><span class="spinner sm" style="display:none"></span><span id="syncText">auto-refresh on · every 8s</span></span>
+        <button class="btn btn-ghost" onclick="fetchMessages(true)">⟳ Refresh</button>
+      </div>
+    </div>
+    <div class="msg-list" id="msgList">
+      <div class="empty"><div class="big">🕊️</div>Waiting for incoming mail…<br>Any message sent to your address appears here instantly.</div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="feat"><div class="ic">⚡</div><h3>Instant activation</h3><p>Address created the moment the page loads. No registration, no personal data required.</p></div>
+    <div class="feat"><div class="ic">🛡️</div><h3>Privacy first</h3><p>Your real email stays hidden. Throwaway identity prevents spam and tracking.</p></div>
+    <div class="feat"><div class="ic">🔓</div><h3>Real IMAP backend</h3><p>Powered by a genuine mail server — receive mail from any sender, including verification links.</p></div>
+    <div class="feat"><div class="ic">♾️</div><h3>Inbox until you leave</h3><p>The mailbox lives for your whole session. Close the tab and it evaporates forever.</p></div>
+  </section>
+
+</div>
+
+<footer>
+  <div>© 2026 TempMail Pro — for testing & privacy protection only. Not for unlawful use.</div>
+  <div>Made with 💙 · Powered by mail.tm</div>
+</footer>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 id="mSubj"></h3><small id="mMeta"></small></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "https://api.mail.tm";
+const POLL_MS = 8000;
+let token = null, address = null, accountPassword = null;
+let sessionStart = Date.now(), lastSync = null;
+let seen = new Set(), lastList = [], syncing = false, reauthing = false;
+
+/* ---------- utils ---------- */
+function rnd(n){const c="abcdefghijklmnopqrstuvwxyz0123456789";let s="";for(let i=0;i<n;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200);}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function setStatus(live,label){document.getElementById("statStatus").innerHTML='<span class="status-dot '+(live?"live":"offline")+'"></span>'+label;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function setSyncing(on){
+  document.querySelector("#syncBadge .spinner.sm").style.display = on ? "inline-block" : "none";
+  document.getElementById("syncText").textContent = on ? "syncing…" : ("auto-refresh on · every " + (POLL_MS/1000) + "s");
+}
+
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); }
+  catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{document.execCommand("copy");}catch(_){}
+    ta.remove();
+  }
+}
+
+/* ---------- auth ---------- */
+async function getToken(){
+  const r = await fetch(API+"/token",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({address,password:accountPassword})});
+  if(!r.ok) return false;
+  token = (await r.json()).token;
+  return true;
+}
+
+async function init(){
+  try{
+    const doms = await (await fetch(API+"/domains?page=1")).json();
+    const members = doms["hydra:member"]||[];
+    const domain = (members.find(d=>d.isActive)||members[0])?.domain;
+    if(!domain) throw new Error("no domain");
+
+    let acc=null;
+    for(let attempt=0; attempt<4 && !acc; attempt++){
+      try{
+        address = rnd(10)+"@"+domain;
+        accountPassword = rnd(16)+"Aa1!";
+        const r = await fetch(API+"/accounts",{method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({address,password:accountPassword})});
+        if(r.ok){ acc = await r.json(); }
+        else if(r.status===429){ await sleep(1500*(attempt+1)); }
+        else if(r.status===422){ address=null; }
+        else { await sleep(1200); }
+      }catch(e){ await sleep(1500); }
+    }
+    if(!acc) throw new Error("account");
+
+    for(let attempt=0; attempt<3 && !token; attempt++){
+      try{ if(await getToken()) break; }catch(e){}
+      await sleep(1200*(attempt+1));
+    }
+    if(!token) throw new Error("token");
+
+    const box=document.getElementById("addrBox");
+    box.textContent=address; box.classList.remove("placeholder");
+    setStatus(true,"Live");
+
+    fetchMessages();
+    setInterval(()=>fetchMessages(false), POLL_MS);          /* foreground auto-refresh */
+    document.addEventListener("visibilitychange",()=>{        /* catch-up after tab was hidden */
+      if(!document.hidden && token) fetchMessages(false);
+    });
+    setInterval(()=>{
+      const s=Math.floor((Date.now()-sessionStart)/1000);
+      document.getElementById("statSession").textContent=Math.floor(s/60)+"m "+String(s%60).padStart(2,"0")+"s";
+      document.getElementById("statSync").textContent = lastSync ? Math.max(0,Math.floor((Date.now()-lastSync)/1000))+"s ago" : "—";
+    },1000);
+  }catch(e){
+    const box=document.getElementById("addrBox");
+    box.classList.remove("placeholder");
+    box.textContent="⚠️ Could not reach mail server — check your connection.";
+    setStatus(false,"Offline");
+  }
+}
+
+/* ---------- inbox ---------- */
+async function fetchMessages(manual){
+  if(!token || syncing) return;
+  syncing = true; setSyncing(true);
+  try{
+    const res = await fetch(API+"/messages?page=1",{headers:{Authorization:"Bearer "+token}});
+    if(res.status===401){                    /* token expired -> re-authenticate once */
+      if(!reauthing){
+        reauthing = true;
+        const ok = await getToken();
+        reauthing = false;
+        if(ok){ syncing=false; setSyncing(false); fetchMessages(manual); return; }
+        setStatus(false,"Session expired");
+        if(manual) toast("Session expired — reload for a new identity");
+      }
+      return;
+    }
+    if(!res.ok) throw new Error("http "+res.status);
+    const data = await res.json();
+    lastList = data["hydra:member"]||[];
+    lastSync = Date.now();
+    setStatus(true,"Live");
+    const fresh = lastList.filter(m=>!seen.has(m.id)).length;
+    document.getElementById("statCount").textContent=lastList.length;
+    renderList(lastList);
+    if(manual) toast("Inbox refreshed");
+    else if(fresh>0) toast("📨 "+fresh+" new message"+(fresh>1?"s":""));
+  }catch(e){
+    if(manual) toast("Refresh failed — check connection");
+  }finally{
+    syncing = false; setSyncing(false);
+  }
+}
+
+function renderList(list){
+  const el=document.getElementById("msgList");
+  if(!list.length){
+    el.innerHTML='<div class="empty"><div class="big">🕊️</div>No messages yet.<br>Mail usually arrives within seconds.</div>';
+    return;
+  }
+  el.innerHTML=list.map(m=>`
+    <div class="msg ${seen.has(m.id)?"":"unread"}" onclick="openMsg('${esc(m.id)}')">
+      <div class="msg-top">
+        <div class="msg-from">${esc(m.from?.name||m.from?.address||"Unknown sender")}</div>
+        <div class="msg-time">${new Date(m.createdAt).toLocaleString()}</div>
+      </div>
+      <div class="msg-subj">${esc(m.subject||"(no subject)")}</div>
+      <div class="msg-intro">${esc((m.intro||"").slice(0,120))}</div>
+    </div>`).join("");
+}
+
+async function openMsg(id){
+  if(!token) return;
+  seen.add(id);
+  renderList(lastList);
+  try{
+    const res = await fetch(API+"/messages/"+encodeURIComponent(id),{headers:{Authorization:"Bearer "+token}});
+    if(!res.ok) throw new Error();
+    const m = await res.json();
+    document.getElementById("mSubj").textContent=m.subject||"(no subject)";
+    document.getElementById("mMeta").textContent="From: "+(m.from?.address||"unknown")+" · "+new Date(m.createdAt).toLocaleString();
+    document.getElementById("mBody").innerHTML = m.html ? sanitizeHTML(m.html)
+      : "<pre style='white-space:pre-wrap;font-family:inherit'>"+esc(m.text||"(empty message)")+"</pre>";
+    document.getElementById("modalBg").classList.add("open");
+  }catch(e){ toast("Could not load message"); }
+}
+
+function sanitizeHTML(dirty){
+  const doc=new DOMParser().parseFromString(String(dirty),"text/html");
+  doc.querySelectorAll("script,iframe,object,embed,form,meta,link,audio,video").forEach(n=>n.remove());
+  doc.querySelectorAll("*").forEach(el=>{[...el.attributes].forEach(a=>{
+    if(/^on/i.test(a.name)||/^\s*javascript:/i.test(a.value))el.removeAttribute(a.name);});});
+  return doc.body.innerHTML;
+}
+
+function closeModal(){document.getElementById("modalBg").classList.remove("open");}
+
+async function copyAddr(){
+  if(!address){toast("No address yet — wait a moment");return;}
+  await copyText(address);
+  toast("Address copied 📋");
+}
+
+function showQR(){
+  if(!address){toast("No address yet — wait a moment");return;}
+  const w=window.open("https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="+encodeURIComponent(address),"_blank");
+  if(!w) toast("Popup blocked — allow popups for QR view");
+}
+
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+init();
+</script>
+</body>
+</html>
